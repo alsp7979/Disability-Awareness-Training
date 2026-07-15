@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>직장 내 장애인 인식 및 협업 성향 자가진단</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for beautiful analytics -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter & Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Modern scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .option-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-bar-fill {
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+
+    <!-- Header/Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md flex items-center justify-center">
+                    <i class="fa-solid fa-users-viewfinder text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-black text-slate-900 tracking-tight text-lg">포용성 진단 시스템</span>
+                    <span class="hidden sm:inline-block text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full ml-2 font-semibold">장애인 인식 & 협업</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="btn-home-nav" onclick="navigateTo('home')" class="text-sm font-medium text-slate-600 hover:text-indigo-600 px-3 py-2 rounded-lg transition-colors">
+                    <i class="fa-solid fa-house mr-1.5"></i>홈으로
+                </button>
+                <button id="btn-admin-nav" onclick="openAdminModal()" class="text-sm font-medium text-slate-700 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 border border-slate-200">
+                    <i class="fa-solid fa-user-tie text-slate-500"></i>강사/대시보드
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex flex-col">
+        
+        <!-- Home / Splash Screen -->
+        <section id="section-home" class="max-w-4xl mx-auto px-4 py-10 sm:py-16 flex-grow flex flex-col justify-center w-full">
+            <div class="text-center space-y-6 max-w-2xl mx-auto">
+                <div class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                    Self-Diagnosis Tool (15 Questions)
+                </div>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 leading-tight tracking-tight">
+                    직장 내 장애인 인식 및 <br class="hidden sm:inline">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">협업 성향 자가 진단</span>
+                </h1>
+                <p class="text-slate-600 text-base sm:text-lg leading-relaxed font-normal">
+                    본 진단지는 우리가 직장에서 흔히 겪는 소통 방식, 파트너십에 대한 관점, 업무상 협업 심리를 분석하여 스스로의 포용 성숙도를 평가하는 정밀 성향 진단 도구입니다.
+                </p>
+            </div>
+
+            <!-- Department and Name Selection for Workshop Setup -->
+            <div class="mt-10 max-w-md mx-auto w-full bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-100 space-y-5">
+                <h3 class="text-slate-900 font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-id-card text-indigo-500"></i>진단 참가자 정보 입력
+                </h3>
+                <p class="text-xs text-slate-400 -mt-2">작성하신 정보는 강사 페이지에서 통합 통계 데이터로 분석하는 데 활용됩니다.</p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">소속 부서 / 직급</label>
+                    <input type="text" id="user-dept" placeholder="예: 개발팀 선임, 마케팅팀 대리" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm font-medium">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">이름 또는 닉네임</label>
+                    <input type="text" id="user-name" placeholder="예: 홍길동, 포용주의자" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm font-medium">
+                </div>
+                
+                <button onclick="startDiagnostic()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-base">
+                    진단 시작하기 <i class="fa-solid fa-circle-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Quick Guidelines -->
+            <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 flex gap-4 items-start">
+                    <div class="bg-indigo-50 text-indigo-600 p-3 rounded-xl"><i class="fa-solid fa-clock text-lg"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">소요 시간 약 3분</h4>
+                        <p class="text-xs text-slate-500 mt-1">심사숙고하기보다는 직관적으로 와닿는 보기를 골라주세요.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 flex gap-4 items-start">
+                    <div class="bg-violet-50 text-violet-600 p-3 rounded-xl"><i class="fa-solid fa-sliders text-lg"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">15개 엄선된 문항</h4>
+                        <p class="text-xs text-slate-500 mt-1">인식, 실무 소통, 심리적 선입견 등 3가지 핵심 영역 분석</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 flex gap-4 items-start">
+                    <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl"><i class="fa-solid fa-chart-line text-lg"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">종합 피드백 제공</h4>
+                        <p class="text-xs text-slate-500 mt-1">자가점수 계산 및 행동 가이드를 시각적 차트와 함께 확인</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Questionnaire Wizard Section -->
+        <section id="section-diagnostic" class="hidden max-w-2xl mx-auto px-4 py-8 flex-grow flex flex-col justify-center w-full">
+            <!-- Progress Tracker -->
+            <div class="mb-8 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    <span id="diagnostic-domain" class="text-indigo-600 font-extrabold bg-indigo-50 px-2.5 py-1 rounded-md">영역 표시</span>
+                    <span id="diagnostic-progress-text" class="font-mono text-sm text-slate-700">01 / 15</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div id="diagnostic-progress-bar" class="progress-bar-fill h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-[0%]"></div>
+                </div>
+            </div>
+
+            <!-- Card Layout of Active Question -->
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-10 min-h-[380px] flex flex-col justify-between relative overflow-hidden">
+                <!-- Watermark Background -->
+                <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none text-9xl text-indigo-900">
+                    <i class="fa-solid fa-quote-right"></i>
+                </div>
+
+                <!-- Question Area -->
+                <div class="space-y-4">
+                    <span id="question-index" class="text-indigo-600 font-extrabold text-lg sm:text-xl font-mono block">Q.01</span>
+                    <h2 id="question-text" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">
+                        로딩 중...
+                    </h2>
+                </div>
+
+                <!-- Answer Options Layout (1 to 4 pts) -->
+                <div class="grid grid-cols-1 gap-3.5 mt-8">
+                    <button onclick="selectOption(1)" class="option-button w-full px-5 py-4 border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-2xl flex items-center justify-between text-left group">
+                        <span class="text-sm sm:text-base font-semibold text-slate-600 group-hover:text-slate-900 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-indigo-100 text-slate-500 group-hover:text-indigo-600 flex items-center justify-center font-bold text-sm font-mono">1</span>
+                            전혀 아니다
+                        </span>
+                        <i class="fa-solid fa-circle-check text-slate-200 group-hover:text-indigo-400 text-lg"></i>
+                    </button>
+                    <button onclick="selectOption(2)" class="option-button w-full px-5 py-4 border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-2xl flex items-center justify-between text-left group">
+                        <span class="text-sm sm:text-base font-semibold text-slate-600 group-hover:text-slate-900 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-indigo-100 text-slate-500 group-hover:text-indigo-600 flex items-center justify-center font-bold text-sm font-mono">2</span>
+                            아니다
+                        </span>
+                        <i class="fa-solid fa-circle-check text-slate-200 group-hover:text-indigo-400 text-lg"></i>
+                    </button>
+                    <button onclick="selectOption(3)" class="option-button w-full px-5 py-4 border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-2xl flex items-center justify-between text-left group">
+                        <span class="text-sm sm:text-base font-semibold text-slate-600 group-hover:text-slate-900 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-indigo-100 text-slate-500 group-hover:text-indigo-600 flex items-center justify-center font-bold text-sm font-mono">3</span>
+                            그렇다
+                        </span>
+                        <i class="fa-solid fa-circle-check text-slate-200 group-hover:text-indigo-400 text-lg"></i>
+                    </button>
+                    <button onclick="selectOption(4)" class="option-button w-full px-5 py-4 border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-2xl flex items-center justify-between text-left group">
+                        <span class="text-sm sm:text-base font-semibold text-slate-600 group-hover:text-slate-900 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-indigo-100 text-slate-500 group-hover:text-indigo-600 flex items-center justify-center font-bold text-sm font-mono">4</span>
+                            매우 그렇다
+                        </span>
+                        <i class="fa-solid fa-circle-check text-slate-200 group-hover:text-indigo-400 text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Navigation Back / Reset -->
+                <div class="flex items-center justify-between mt-8 pt-4 border-t border-slate-100">
+                    <button id="btn-prev-question" onclick="goToPrevQuestion()" class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-chevron-left"></i> 이전 문항으로
+                    </button>
+                    <button onclick="resetDiagnosticToHome()" class="px-4 py-2 text-xs font-bold text-red-400 hover:text-red-600 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i> 자가진단 초기화
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diagnostic Result Screen -->
+        <section id="section-result" class="hidden max-w-5xl mx-auto px-4 py-8 sm:py-12 flex-grow flex flex-col justify-center w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left: Big Category Card -->
+                <div class="lg:col-span-5 bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-8 text-center space-y-6">
+                    <div id="result-badge-container" class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-black tracking-wide uppercase">
+                        결과 진단 보고서
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <p class="text-xs text-slate-400 uppercase font-black tracking-widest font-mono">나의 종합 점수</p>
+                        <div class="flex items-baseline justify-center gap-1">
+                            <span id="result-score" class="text-6xl sm:text-7xl font-black text-indigo-600 font-mono">55</span>
+                            <span class="text-xl text-slate-400 font-bold">/ 60점</span>
+                        </div>
+                    </div>
+
+                    <!-- Category Illustration / Icon Frame -->
+                    <div class="w-24 h-24 mx-auto rounded-3xl flex items-center justify-center text-4xl shadow-inner relative overflow-hidden" id="result-icon-box">
+                        <i class="fa-solid fa-hands-holding-child"></i>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 id="result-category-title" class="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                            포용적 협업가 (Inclusive Colleague)
+                        </h3>
+                        <p id="result-category-subtitle" class="text-xs text-indigo-600 font-bold bg-indigo-50/50 inline-block px-3 py-1 rounded-full">
+                            46점 ~ 60점 구간
+                        </p>
+                    </div>
+
+                    <p id="result-category-desc" class="text-slate-600 text-sm leading-relaxed text-justify px-2">
+                        장애를 환경의 문제로 바라보며 동등한 비즈니스 파트너로 소통할 준비가 된 리더형 직장인입니다.
+                    </p>
+
+                    <div class="border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
+                        <button onclick="resetDiagnosticToHome()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrow-rotate-right"></i> 다시 테스트하기
+                        </button>
+                        <button onclick="shareResultsToClipboard()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-share-nodes"></i> 결과 복사하기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Domain Analytics & Visual Chart -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Radar/Bar Chart Card -->
+                    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-8">
+                        <h4 class="font-extrabold text-slate-900 text-base flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-chart-pie text-indigo-500"></i> 영역별 상세 분석 (나 vs 평균)
+                        </h4>
+                        <div class="w-full max-w-[400px] mx-auto h-[280px] sm:h-[320px]">
+                            <canvas id="userResultChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Domain Detail Progress Card -->
+                    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-5">
+                        <h4 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-indigo-500"></i> 진단 영역별 획득 점수
+                        </h4>
+                        
+                        <div class="space-y-4">
+                            <!-- Domain 1 -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-bold text-slate-700">1영역. 관점 및 인식 점검 (환경과 사회)</span>
+                                    <span class="font-bold text-slate-950 font-mono" id="score-domain-1">15/20</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" id="bar-domain-1" style="width: 75%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Domain 2 -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-bold text-slate-700">2영역. 실무 소통 및 협업 태도</span>
+                                    <span class="font-bold text-slate-950 font-mono" id="score-domain-2">15/20</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full" id="bar-domain-2" style="width: 75%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Domain 3 -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-bold text-slate-700">3영역. 직장 내 심리와 행동 선입견</span>
+                                    <span class="font-bold text-slate-950 font-mono" id="score-domain-3">15/20</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full" id="bar-domain-3" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Instructor Dashboard Screen -->
+        <section id="section-admin" class="hidden max-w-7xl mx-auto px-4 py-8 sm:py-12 flex-grow flex flex-col justify-start w-full space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-indigo-600"></i> 강사 피드백 대시보드
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">우리 부서원들의 실시간 자가진단 참여도와 평균 통계를 확인하고 관리할 수 있습니다.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportToCSV()" class="px-4 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel"></i> Excel (CSV) 추출
+                    </button>
+                    <button onclick="openConfirmResetModal()" class="px-4 py-2.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl border border-red-100 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-can"></i> 전체 데이터 초기화
+                    </button>
+                </div>
+            </div>
+
+            <!-- Key Indicators Widgets Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1: Total Submissions -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 flex items-center justify-between">
+                    <div class="space-y-1">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">총 참여 인원</p>
+                        <h2 id="admin-total-participants" class="text-3xl font-black text-slate-900 font-mono">0명</h2>
+                    </div>
+                    <div class="bg-indigo-50 text-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-user-group"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2: Overall Average -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 flex items-center justify-between">
+                    <div class="space-y-1">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">종합 평균 점수</p>
+                        <h2 id="admin-overall-average" class="text-3xl font-black text-slate-900 font-mono">0.0점</h2>
+                    </div>
+                    <div class="bg-violet-50 text-violet-600 w-12 h-12 rounded-2xl flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3: Max Participant -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 flex items-center justify-between">
+                    <div class="space-y-1">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">최고 점수 기록</p>
+                        <h2 id="admin-max-score" class="text-3xl font-black text-emerald-600 font-mono">0점</h2>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-medal"></i>
+                    </div>
+                </div>
+
+                <!-- Card 4: Min Participant -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 flex items-center justify-between">
+                    <div class="space-y-1">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">최저 점수 기록</p>
+                        <h2 id="admin-min-score" class="text-3xl font-black text-rose-600 font-mono">0점</h2>
+                    </div>
+                    <div class="bg-rose-50 text-rose-600 w-12 h-12 rounded-2xl flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-arrow-down-short-wide"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Left Chart Area -->
+                <div class="lg:col-span-4 bg-white p-6 rounded-3xl shadow-md border border-slate-100 space-y-6">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-chart-simple text-indigo-500"></i> 협업 성향 유형 분포
+                        </h4>
+                        <p class="text-xs text-slate-400 mt-0.5">참여자들의 최종 성향 비율 구성</p>
+                    </div>
+                    <div class="h-[220px] sm:h-[260px] flex items-center justify-center">
+                        <canvas id="adminDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right Submissions Table Area -->
+                <div class="lg:col-span-8 bg-white p-6 rounded-3xl shadow-md border border-slate-100 space-y-4">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                            <h4 class="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-receipt text-indigo-500"></i> 참가자 세부 응답 로그
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-0.5">실시간으로 반영되는 부서별 참가 정보입니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Responsive Grid/Table Wrapper -->
+                    <div class="overflow-x-auto w-full border border-slate-100 rounded-2xl">
+                        <table class="w-full text-left text-sm text-slate-600 border-collapse">
+                            <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-xs">
+                                <tr>
+                                    <th class="px-4 py-3 border-b border-slate-100 text-center">번호</th>
+                                    <th class="px-4 py-3 border-b border-slate-100">이름</th>
+                                    <th class="px-4 py-3 border-b border-slate-100">소속 부서</th>
+                                    <th class="px-4 py-3 border-b border-slate-100 text-center">1영역</th>
+                                    <th class="px-4 py-3 border-b border-slate-100 text-center">2영역</th>
+                                    <th class="px-4 py-3 border-b border-slate-100 text-center">3영역</th>
+                                    <th class="px-4 py-3 border-b border-slate-100 text-center">종합 점수</th>
+                                    <th class="px-4 py-3 border-b border-slate-100">최종 결과 유형</th>
+                                    <th class="px-4 py-3 border-b border-slate-100 text-center">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body" class="divide-y divide-slate-100 font-medium">
+                                <!-- Dynamic rows -->
+                                <tr>
+                                    <td colspan="9" class="text-center text-slate-400 py-10 font-normal">
+                                        <i class="fa-solid fa-spinner animate-spin text-xl text-indigo-500 mb-2 block"></i>
+                                        데이터를 불러오는 중입니다...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Modals UI (No window.alert and window.confirm used as per strict directives) -->
+    
+    <!-- Passcode Verification Modal -->
+    <div id="modal-passcode" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-sm w-full p-6 space-y-6 transform transition-all">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 mx-auto rounded-full flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-lg">강사 로그인 인증</h3>
+                <p class="text-xs text-slate-500">대시보드에 접근하기 위해 비밀번호를 입력하세요.</p>
+            </div>
+            <div>
+                <input type="password" id="admin-passcode-input" placeholder="비밀번호(기본: 1234) 입력" class="w-full text-center px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-base font-bold tracking-widest">
+                <p id="admin-passcode-error" class="text-red-500 text-xs mt-1.5 font-semibold text-center hidden">비밀번호가 올바르지 않습니다.</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closeAdminModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all">취소</button>
+                <button onclick="verifyPasscode()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition-all">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal for Delete/Reset -->
+    <div id="modal-confirm" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-sm w-full p-6 space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-red-50 text-red-600 mx-auto rounded-full flex items-center justify-center text-lg animate-bounce">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-lg">참여 데이터 전체 초기화</h3>
+                <p class="text-xs text-slate-500">진행 시 현재까지 누적된 모든 피실험자 정보 및 결과 데이터가 영구 삭제됩니다. 계속하시겠습니까?</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closeConfirmResetModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all">아니오, 취소</button>
+                <button id="btn-modal-confirm-reset" class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-all">예, 초기화</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Toast System -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none"></div>
+
+    <!-- Footer Area -->
+    <footer class="bg-slate-100 border-t border-slate-200 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p>&copy; 2026 포용성 진단 시스템. All rights reserved.</p>
+            <div class="flex gap-4">
+                <span>직장 내 장애인 인식 개선 교육 자가진단</span>
+                <span>|</span>
+                <span>피드백 분석용 데이터 동기화 활성화됨</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firestore Core Logic Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration (Uses environmental configurations or falls back securely)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'disability-awareness-diagnostics-2026';
+        const defaultFirebaseConfig = {
+            apiKey: "dummy-key-for-development",
+            authDomain: "dummy.firebaseapp.com",
+            projectId: "dummy-project",
+            storageBucket: "dummy.appspot.com",
+            messagingSenderId: "12345678",
+            appId: "1:1234:web:abcd"
+        };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : defaultFirebaseConfig;
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Core Global State
+        let submissionsList = [];
+        let isAuthSuccess = false;
+
+        // Diagnostic Questions Config
+        const QUESTIONS = [
+            // 1영역: 관점 및 인식 점검 (환경과 사회)
+            { id: 1, domainId: 1, domainName: "관점 및 인식 점검 (환경과 사회)", text: "우리 회사의 물리적 공간(탕비실, 회의실 등)이나 디지털 시스템이 누군가에게는 일하기 힘든 '장벽'이 될 수 있음을 의식해 본 적이 있다." },
+            { id: 2, domainId: 1, domainName: "관점 및 인식 점검 (환경과 사회)", text: "장애인 고용은 시혜적(복지) 차원보다, 다양한 시각을 가진 인재를 확보하는 기업 경쟁력 차원에서 필요하다고 생각한다." },
+            { id: 3, domainId: 1, domainName: "관점 및 인식 점검 (환경과 사회)", text: "직장 내 장애인 동료가 겪는 업무상 어려움은 개인의 신체적 한계보다 회사의 지원 체계나 환경이 미비하기 때문인 경우가 많다." },
+            { id: 4, domainId: 1, domainName: "관점 및 인식 점검 (환경과 사회)", text: "기술의 발전(AI 자막, 음성 인식 등)이 장애인 동료의 업무 생산성을 비장애인 수준으로 끌어올릴 수 있다고 믿는다." },
+            { id: 5, domainId: 1, domainName: "관점 및 인식 점검 (환경과 사회)", text: "장애는 고정된 상태가 아니라, 나이가 들거나 불의의 사고로 나에게도 언제든 찾아올 수 있는 보편적인 일이라고 생각한다." },
+            
+            // 2영역: 실무 소통 및 협업 태도
+            { id: 6, domainId: 2, domainName: "실무 소통 및 협업 태도", text: "글자 없는 이미지 파일이나 자막 없는 영상으로 업무 소통을 할 때, 시각/청각적 제약이 있는 동료가 느낄 고립감을 고려해 본 적이 있다." },
+            { id: 7, domainId: 2, domainName: "실무 소통 및 협업 태도", text: "장애인 동료에게 업무 지시를 내리거나 협업할 때, '알아서 해주세요' 같은 모호한 표현 대신 단계별로 명확하게 쪼개어 설명하는 것이 더 효율적임을 알고 있다." },
+            { id: 8, domainId: 2, domainName: "실무 소통 및 협업 태도", text: "장애인 동료가 업무 중 실수를 했을 때, 무조건 눈감아주는 것보다 필요한 도구를 지원한 후 공정하게 피드백하는 것이 동료를 진정으로 존중하는 방법이다." },
+            { id: 9, domainId: 2, domainName: "실무 소통 및 협업 태도", text: "회의나 워크숍을 기획할 때, 장소나 이동 경로가 모든 팀원(이동 약자 포함)에게 접근하기 편리한 곳인지 먼저 확인하는 편이다." },
+            { id: 10, domainId: 2, domainName: "실무 소통 및 협업 태도", text: "장애인 동료의 업무 속도가 조금 늦더라도, 다그치거나 내가 대신 해버리기보다 본인의 페이스대로 완수할 수 있도록 기다려줄 수 있다." },
+
+            // 3영역: 직장 내 심리와 행동 선입견
+            { id: 11, domainId: 3, domainName: "직장 내 심리와 행동 선입견", text: "장애인 동료를 대할 때 과도한 친절이나 조심스러움보다는, 비장애인 동료와 똑같은 직장 동료로 편안하게 대하려고 노력한다." },
+            { id: 12, domainId: 3, domainName: "직장 내 심리와 행동 선입견", text: "동료가 어려움을 겪고 있는 것처럼 보일 때, 내 판단으로 먼저 개입하기보다 '제가 도와드릴까요?'라고 의사를 먼저 묻는 것이 매너임을 알고 있다." },
+            { id: 13, domainId: 3, domainName: "직장 내 심리와 행동 선입견", text: "우리 팀에 장애인 사원이 새로 배치된다고 하더라도, '내 업무 부담이 무조건 늘어날 것'이라는 선입견부터 갖지 않는다." },
+            { id: 14, domainId: 3, domainName: "직장 내 심리와 행동 선입견", text: "나는 직장 내에서 장애인을 빗댄 비하 발언이나 차별적인 용어(예: 정상인, 결정장애 등)를 사용하는 동료를 보면 문제의식을 느낀다." },
+            { id: 15, domainId: 3, domainName: "직장 내 심리와 행동 선입견", text: "장애인 동료가 성과를 냈을 때 '장애인치고 잘했다'는 식의 은연중 동정 섞인 칭찬보다, 결과물 자체를 객관적으로 평가하고 축하한다." }
+        ];
+
+        // Participant survey response tracking
+        let currentIdx = 0;
+        let userResponses = []; // Array of { id: num, score: num }
+        let userName = "";
+        let userDept = "";
+
+        // Chart References
+        let userRadarChart = null;
+        let adminDoughnutChart = null;
+
+        // Authenticate User First (Strict RULE 3 Implementation)
+        async function authenticateUser() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                isAuthSuccess = true;
+                showToast("시스템 연결 완료 (실시간 연동 가동 중)", "info");
+                listenToSubmissions();
+            } catch (error) {
+                console.error("Authentication failed: ", error);
+                showToast("인증 서버 연결 실패. 일부 저장 기능이 제한될 수 있습니다.", "error");
+            }
+        }
+
+        // Real-time listener for Instructor data collection (Rule 1 & Rule 2 compliant)
+        function listenToSubmissions() {
+            if (!isAuthSuccess) return;
+
+            // Strict collection path for shared public database
+            const q = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+            
+            onSnapshot(q, (snapshot) => {
+                submissionsList = [];
+                snapshot.forEach((docSnap) => {
+                    submissionsList.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    });
+                });
+                // Update dashboards dynamically
+                updateInstructorDashboard();
+            }, (error) => {
+                console.error("Firestore listening error: ", error);
+                showToast("데이터를 동기화하는 도중 에러가 발생했습니다.", "error");
+            });
+        }
+
+        // Run setup on load
+        window.onload = function() {
+            authenticateUser();
+        };
+
+        // Page Navigation Router
+        window.navigateTo = function(sectionId) {
+            // Hide all views first
+            document.getElementById('section-home').classList.add('hidden');
+            document.getElementById('section-diagnostic').classList.add('hidden');
+            document.getElementById('section-result').classList.add('hidden');
+            document.getElementById('section-admin').classList.add('hidden');
+
+            // Show active
+            const activeSec = document.getElementById(`section-${sectionId}`);
+            if (activeSec) activeSec.classList.remove('hidden');
+
+            // Handle Nav active state highlight
+            const homeBtn = document.getElementById('btn-home-nav');
+            const adminBtn = document.getElementById('btn-admin-nav');
+            if (sectionId === 'home') {
+                homeBtn.classList.add('text-indigo-600', 'font-bold');
+                adminBtn.classList.remove('text-indigo-600', 'font-bold');
+            } else if (sectionId === 'admin') {
+                adminBtn.classList.add('text-indigo-600', 'bg-indigo-50/50', 'border-indigo-200');
+                homeBtn.classList.remove('text-indigo-600', 'font-bold');
+            } else {
+                homeBtn.classList.remove('text-indigo-600', 'font-bold');
+                adminBtn.classList.remove('text-indigo-600', 'bg-indigo-50/50', 'border-indigo-200');
+            }
+        };
+
+        // Start Diagnostic Trigger
+        window.startDiagnostic = function() {
+            const deptInput = document.getElementById('user-dept').value.trim();
+            const nameInput = document.getElementById('user-name').value.trim();
+
+            if (!deptInput || !nameInput) {
+                showToast("부서와 이름을 모두 적절히 입력해주세요.", "error");
+                return;
+            }
+
+            userDept = deptInput;
+            userName = nameInput;
+            currentIdx = 0;
+            userResponses = [];
+            
+            showToast(`${userName}님 반갑습니다! 자가진단을 개시합니다.`, "success");
+            navigateTo('diagnostic');
+            renderQuestion();
+        };
+
+        // Reset state & Return home
+        window.resetDiagnosticToHome = function() {
+            document.getElementById('user-dept').value = "";
+            document.getElementById('user-name').value = "";
+            currentIdx = 0;
+            userResponses = [];
+            navigateTo('home');
+        };
+
+        // Render Wizard Question Card
+        function renderQuestion() {
+            if (currentIdx >= QUESTIONS.length) {
+                submitFinalResults();
+                return;
+            }
+
+            const currentQ = QUESTIONS[currentIdx];
+            
+            // Render domain text
+            const domainContainer = document.getElementById('diagnostic-domain');
+            domainContainer.innerText = `${currentQ.domainId}영역. ${currentQ.domainName}`;
+
+            // Progress Bar & Tracker
+            const progressPct = ((currentIdx + 1) / QUESTIONS.length) * 100;
+            document.getElementById('diagnostic-progress-bar').style.width = `${progressPct}%`;
+            document.getElementById('diagnostic-progress-text').innerText = `${String(currentIdx + 1).padStart(2, '0')} / ${QUESTIONS.length}`;
+
+            // Render current question text
+            document.getElementById('question-index').innerText = `Q.${String(currentIdx + 1).padStart(2, '0')}`;
+            document.getElementById('question-text').innerText = currentQ.text;
+
+            // Reset selection style
+            const options = document.querySelectorAll('.option-button');
+            options.forEach((btn, index) => {
+                // Remove previous selected border highlights
+                btn.className = "option-button w-full px-5 py-4 border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-2xl flex items-center justify-between text-left group";
+                
+                // If already answered, highlight again
+                if (userResponses[currentIdx] !== undefined && userResponses[currentIdx] === (index + 1)) {
+                    btn.className = "option-button w-full px-5 py-4 border-2 border-indigo-600 bg-indigo-50/40 rounded-2xl flex items-center justify-between text-left group";
+                }
+            });
+
+            // Disable/Enable back button
+            const prevBtn = document.getElementById('btn-prev-question');
+            if (currentIdx === 0) {
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.disabled = false;
+            }
+        }
+
+        // Option selection trigger
+        window.selectOption = function(selectedScore) {
+            userResponses[currentIdx] = selectedScore;
+            
+            // Visual highlight animation transition
+            const btns = document.querySelectorAll('.option-button');
+            btns.forEach((btn, index) => {
+                if (index === (selectedScore - 1)) {
+                    btn.className = "option-button w-full px-5 py-4 border-2 border-indigo-600 bg-indigo-50/40 rounded-2xl flex items-center justify-between text-left group";
+                } else {
+                    btn.className = "option-button w-full px-5 py-4 border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-2xl flex items-center justify-between text-left group";
+                }
+            });
+
+            // Advance automatically after small feedback delay
+            setTimeout(() => {
+                currentIdx++;
+                renderQuestion();
+            }, 300);
+        };
+
+        // Go to previous step
+        window.goToPrevQuestion = function() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                renderQuestion();
+            }
+        };
+
+        // Submit Results & Save to Firestore
+        async function submitFinalResults() {
+            // Compute scores
+            let totalScore = 0;
+            let d1Score = 0;
+            let d2Score = 0;
+            let d3Score = 0;
+
+            for (let i = 0; i < QUESTIONS.length; i++) {
+                const s = userResponses[i];
+                totalScore += s;
+                if (QUESTIONS[i].domainId === 1) d1Score += s;
+                if (QUESTIONS[i].domainId === 2) d2Score += s;
+                if (QUESTIONS[i].domainId === 3) d3Score += s;
+            }
+
+            // Map feedback category details
+            let catTitle = "";
+            let catDesc = "";
+            let catBadgeClass = "";
+            let catIcon = "";
+            let catIconBg = "";
+
+            if (totalScore >= 46) {
+                catTitle = "포용적 협업가 (Inclusive Colleague)";
+                catDesc = "장애를 신체적 한계가 아닌 '환경과의 장벽'으로 바라보며, 편견 없는 협업을 실천하는 리더형 직장인입니다. 모호함 대신 단계적이고 투명한 소통 방식을 가지며, 과도한 연민 대신 실체적인 업무 환경 개선과 권한 위임을 중요시합니다. 이미 훌륭한 수준으로 동료들의 잠재력을 끌어내고 있으며, 기업 경쟁력을 높이는 중심 역할을 할 수 있는 성숙도입니다.";
+                catBadgeClass = "bg-emerald-50 text-emerald-700 border-emerald-100";
+                catIcon = "fa-hands-holding-child text-emerald-600";
+                catIconBg = "bg-emerald-50";
+            } else if (totalScore >= 31) {
+                catTitle = "과도기적 관찰자 (Conscious Observer)";
+                catDesc = "마음으로는 배려하고 도우며 포용하고 싶지만, 정작 실무에서 업무를 함께 추진할 때 다소 막막해하거나 선입견의 경계에서 고민하는 경향이 있는 단계입니다. 과도한 배려와 역량 신뢰 사이에서 망설이고 계실 수 있으므로, 명확하게 소통하는 피드백 매뉴얼을 수립하거나 배리어 프리(Barrier-Free) 환경을 조성하는 실천 가이드를 한두 단계 더 학습하면 더욱 단단한 시너지를 이뤄낼 수 있습니다.";
+                catBadgeClass = "bg-amber-50 text-amber-700 border-amber-100";
+                catIcon = "fa-eye text-amber-600";
+                catIconBg = "bg-amber-50";
+            } else {
+                catTitle = "전통적 동정자 (Sympathetic Traditionalist)";
+                catDesc = "장애를 안타까움과 '동정의 대상', 또는 '무조건적인 보호 대상'으로만 바라보고 있을 수 있습니다. 이러한 관점은 실제 현업에서 동등한 동료로서의 퍼포먼스를 기대하기 어렵게 만들어, 협업 과정에서 한쪽에만 과도한 부하가 걸린다는 느낌을 받는 악순환을 낳기 쉽습니다. 장애를 한 사람의 개성이자 비즈니스 파트너의 일면으로 인식하고, 공정한 협력 관계를 구성하려는 실무 관점의 인식 전향이 매우 필요한 상태입니다.";
+                catBadgeClass = "bg-rose-50 text-rose-700 border-rose-100";
+                catIcon = "fa-handshake-angle text-rose-600";
+                catIconBg = "bg-rose-50";
+            }
+
+            // Save payload to Firestore (Strict Rule 1 Compliance)
+            const submissionPayload = {
+                name: userName,
+                dept: userDept,
+                totalScore: totalScore,
+                d1Score: d1Score,
+                d2Score: d2Score,
+                d3Score: d3Score,
+                category: catTitle,
+                timestamp: Date.now()
+            };
+
+            if (isAuthSuccess) {
+                try {
+                    // Strict Path: /artifacts/{appId}/public/data/submissions
+                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+                    await addDoc(colRef, submissionPayload);
+                    showToast("진단 결과가 성공적으로 동기화되었습니다.", "success");
+                } catch (e) {
+                    console.error("Firestore submission save failed: ", e);
+                    showToast("결과는 추출되었으나 서버 저장이 불가능합니다.", "error");
+                }
+            } else {
+                showToast("오프라인 상태로 로컬에서만 분석 결과를 제공합니다.", "info");
+            }
+
+            // Update UI elements in Result screen
+            document.getElementById('result-score').innerText = totalScore;
+            
+            const badge = document.getElementById('result-badge-container');
+            badge.className = `inline-flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-black tracking-wide uppercase border ${catBadgeClass}`;
+            
+            document.getElementById('result-category-title').innerText = catTitle;
+            document.getElementById('result-category-subtitle').innerText = `${totalScore >= 46 ? '46점 ~ 60점' : (totalScore >= 31 ? '31점 ~ 45점' : '15점 ~ 30점')} 구간`;
+            document.getElementById('result-category-desc').innerText = catDesc;
+
+            // Update result icon container classes
+            const iconBox = document.getElementById('result-icon-box');
+            iconBox.className = `w-24 h-24 mx-auto rounded-3xl flex items-center justify-center text-4xl shadow-inner relative overflow-hidden ${catIconBg}`;
+            iconBox.innerHTML = `<i class="fa-solid ${catIcon}"></i>`;
+
+            // Setup score badges
+            document.getElementById('score-domain-1').innerText = `${d1Score}/20`;
+            document.getElementById('bar-domain-1').style.width = `${(d1Score / 20) * 100}%`;
+            document.getElementById('score-domain-2').innerText = `${d2Score}/20`;
+            document.getElementById('bar-domain-2').style.width = `${(d2Score / 20) * 100}%`;
+            document.getElementById('score-domain-3').innerText = `${d3Score}/20`;
+            document.getElementById('bar-domain-3').style.width = `${(d3Score / 20) * 100}%`;
+
+            // Transition page to Result view
+            navigateTo('result');
+
+            // Render Chart comparing Current vs Participant Average
+            setTimeout(() => {
+                renderUserChart(d1Score, d2Score, d3Score);
+            }, 200);
+        }
+
+        // Render Radar Chart for Participant Result
+        function renderUserChart(d1, d2, d3) {
+            const ctx = document.getElementById('userResultChart').getContext('2d');
+
+            // Clear previous if exist to avoid overlaps on multi-test
+            if (userRadarChart) {
+                userRadarChart.destroy();
+            }
+
+            // Get global average for comparison
+            let avgD1 = 15; // default fallback if no participants yet
+            let avgD2 = 14;
+            let avgD3 = 15;
+
+            if (submissionsList.length > 0) {
+                const totalD1 = submissionsList.reduce((acc, sub) => acc + sub.d1Score, 0);
+                const totalD2 = submissionsList.reduce((acc, sub) => acc + sub.d2Score, 0);
+                const totalD3 = submissionsList.reduce((acc, sub) => acc + sub.d3Score, 0);
+                
+                avgD1 = Number((totalD1 / submissionsList.length).toFixed(1));
+                avgD2 = Number((totalD2 / submissionsList.length).toFixed(1));
+                avgD3 = Number((totalD3 / submissionsList.length).toFixed(1));
+            }
+
+            userRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['1영역. 인식 및 환경', '2영역. 실무 협업', '3영역. 심리 선입견'],
+                    datasets: [
+                        {
+                            label: '나의 획득 점수',
+                            data: [d1, d2, d3],
+                            backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            borderWidth: 2.5,
+                            pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                            pointRadius: 4
+                        },
+                        {
+                            label: '전체 참여자 평균',
+                            data: [avgD1, avgD2, avgD3],
+                            backgroundColor: 'rgba(203, 213, 225, 0.25)',
+                            borderColor: 'rgba(148, 163, 184, 0.8)',
+                            borderWidth: 1.5,
+                            borderDash: [5, 5],
+                            pointBackgroundColor: 'rgba(148, 163, 184, 1)',
+                            pointRadius: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 20,
+                            ticks: {
+                                stepSize: 5,
+                                font: { size: 10 }
+                            },
+                            grid: {
+                                color: '#f1f5f9'
+                            },
+                            angleLines: {
+                                color: '#e2e8f0'
+                            },
+                            pointLabels: {
+                                font: {
+                                    family: 'Noto Sans KR',
+                                    weight: 'bold',
+                                    size: 11
+                                },
+                                color: '#334155'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: { family: 'Noto Sans KR', size: 11, weight: 'medium' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Admin Passcode Modal control
+        window.openAdminModal = function() {
+            document.getElementById('modal-passcode').classList.remove('hidden');
+            document.getElementById('admin-passcode-input').value = "";
+            document.getElementById('admin-passcode-error').classList.add('hidden');
+        };
+
+        window.closeAdminModal = function() {
+            document.getElementById('modal-passcode').classList.add('hidden');
+        };
+
+        window.verifyPasscode = function() {
+            const entered = document.getElementById('admin-passcode-input').value;
+            // Password fallback '1234' for easier workshop convenience
+            if (entered === '1234' || entered === 'admin123') {
+                closeAdminModal();
+                showToast("강사 관리자 대시보드가 열렸습니다.", "success");
+                navigateTo('admin');
+                updateInstructorDashboard();
+            } else {
+                document.getElementById('admin-passcode-error').classList.remove('hidden');
+            }
+        };
+
+        // Build & Update Instructor Dashboard Analytics
+        function updateInstructorDashboard() {
+            if (document.getElementById('section-admin').classList.contains('hidden')) {
+                // Return if instructor is not actively looking at dashboard to save redraw cycles
+                return;
+            }
+
+            const totalCount = submissionsList.length;
+            document.getElementById('admin-total-participants').innerText = `${totalCount}명`;
+
+            if (totalCount === 0) {
+                document.getElementById('admin-overall-average').innerText = "0.0점";
+                document.getElementById('admin-max-score').innerText = "0점";
+                document.getElementById('admin-min-score').innerText = "0점";
+                
+                const tableBody = document.getElementById('admin-table-body');
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center text-slate-400 py-10 font-normal">
+                            아직 제출된 진단 결과 데이터가 존재하지 않습니다.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Compute Stats
+            const totalScoreSum = submissionsList.reduce((acc, sub) => acc + sub.totalScore, 0);
+            const overallAvg = (totalScoreSum / totalCount).toFixed(1);
+            document.getElementById('admin-overall-average').innerText = `${overallAvg}점`;
+
+            const allScores = submissionsList.map(sub => sub.totalScore);
+            const maxScore = Math.max(...allScores);
+            const minScore = Math.min(...allScores);
+            document.getElementById('admin-max-score').innerText = `${maxScore}점`;
+            document.getElementById('admin-min-score').innerText = `${minScore}점`;
+
+            // Category Count for doughnut charts
+            let countInclusive = 0; // 46 ~ 60
+            let countObserver = 0;  // 31 ~ 45
+            let countTraditional = 0; // 15 ~ 30
+
+            submissionsList.forEach(sub => {
+                if (sub.totalScore >= 46) countInclusive++;
+                else if (sub.totalScore >= 31) countObserver++;
+                else countTraditional++;
+            });
+
+            // Update Doughnut Chart
+            renderAdminDoughnutChart(countInclusive, countObserver, countTraditional);
+
+            // Populate Table
+            const tableBody = document.getElementById('admin-table-body');
+            tableBody.innerHTML = "";
+
+            // Sort newest first on javascript memory side (RULE 2 compliant)
+            const sortedSubmissions = [...submissionsList].sort((a, b) => b.timestamp - a.timestamp);
+
+            sortedSubmissions.forEach((sub, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+
+                // Category style colors
+                let catStyle = "bg-rose-50 text-rose-700";
+                if (sub.totalScore >= 46) catStyle = "bg-emerald-50 text-emerald-700";
+                else if (sub.totalScore >= 31) catStyle = "bg-amber-50 text-amber-700";
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 text-center text-xs text-slate-400 font-mono">${sortedSubmissions.length - idx}</td>
+                    <td class="px-4 py-3 font-bold text-slate-900">${escapeHtml(sub.name)}</td>
+                    <td class="px-4 py-3 text-xs text-slate-500 font-bold">${escapeHtml(sub.dept)}</td>
+                    <td class="px-4 py-3 text-center font-mono text-xs">${sub.d1Score}</td>
+                    <td class="px-4 py-3 text-center font-mono text-xs">${sub.d2Score}</td>
+                    <td class="px-4 py-3 text-center font-mono text-xs">${sub.d3Score}</td>
+                    <td class="px-4 py-3 text-center font-bold text-indigo-600 font-mono text-base">${sub.totalScore}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2.5 py-1 text-xs font-bold rounded-lg ${catStyle}">${sub.category.split(' ')[0]}</span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button class="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition-all btn-delete-row" data-id="${sub.id}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Bind individual row deletes dynamically
+            document.querySelectorAll('.btn-delete-row').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const docId = this.getAttribute('data-id');
+                    deleteSubmissionRecord(docId);
+                });
+            });
+        }
+
+        // Render Doughnut Chart for admin distribution
+        function renderAdminDoughnutChart(inclusive, observer, traditional) {
+            const ctx = document.getElementById('adminDistributionChart').getContext('2d');
+            
+            if (adminDoughnutChart) {
+                adminDoughnutChart.destroy();
+            }
+
+            adminDoughnutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['포용적 협업가', '과도기적 관찰자', '전통적 동정자'],
+                    datasets: [{
+                        data: [inclusive, observer, traditional],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.85)', // Emerald
+                            'rgba(245, 158, 11, 0.85)', // Amber
+                            'rgba(239, 68, 68, 0.85)'   // Red
+                        ],
+                        borderColor: [
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444'
+                        ],
+                        borderWidth: 1.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Noto Sans KR', size: 11, weight: 'medium' },
+                                boxWidth: 12
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Delete a specific submission record
+        async function deleteSubmissionRecord(docId) {
+            if (!isAuthSuccess) return;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'submissions', docId);
+                await deleteDoc(docRef);
+                showToast("선택된 피실험자 응답 로그를 정상 삭제했습니다.", "info");
+            } catch (err) {
+                console.error("Error deleting document: ", err);
+                showToast("삭제 도중 권한 제한 또는 에러가 발생했습니다.", "error");
+            }
+        }
+
+        // Open Confirm Reset Modal
+        window.openConfirmResetModal = function() {
+            document.getElementById('modal-confirm').classList.remove('hidden');
+            document.getElementById('btn-modal-confirm-reset').onclick = function() {
+                resetAllSubmissions();
+            };
+        };
+
+        window.closeConfirmResetModal = function() {
+            document.getElementById('modal-confirm').classList.add('hidden');
+        };
+
+        // Reset all submissions in workshop database collection
+        async function resetAllSubmissions() {
+            if (!isAuthSuccess) return;
+            closeConfirmResetModal();
+
+            try {
+                // Loop through and delete each doc to securely purge
+                const promises = submissionsList.map(async (sub) => {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'submissions', sub.id);
+                    return deleteDoc(docRef);
+                });
+
+                await Promise.all(promises);
+                showToast("전체 데이터베이스가 완벽히 초기화되었습니다.", "success");
+            } catch (err) {
+                console.error("Bulk deletion failed: ", err);
+                showToast("전체 삭제 도중 오류가 발생했습니다.", "error");
+            }
+        }
+
+        // Safe CSV Generator & Exporter
+        window.exportToCSV = function() {
+            if (submissionsList.length === 0) {
+                showToast("내보낼 데이터 내역이 비어있습니다.", "error");
+                return;
+            }
+
+            let csvContent = "\uFEFF"; // UTF-8 BOM representation for correct Korean display inside Excel
+            csvContent += "순번,이름,부서,1영역(환경인식),2영역(실무협업),3영역(행동선입견),종합점수,결과유형,제출일자\r\n";
+
+            // Map details to rows
+            submissionsList.forEach((sub, index) => {
+                const dateStr = new Date(sub.timestamp).toLocaleString();
+                const row = [
+                    index + 1,
+                    `"${sub.name.replace(/"/g, '""')}"`,
+                    `"${sub.dept.replace(/"/g, '""')}"`,
+                    sub.d1Score,
+                    sub.d2Score,
+                    sub.d3Score,
+                    sub.totalScore,
+                    `"${sub.category.split(' ')[0]}"`,
+                    `"${dateStr}"`
+                ].join(",");
+                csvContent += row + "\r\n";
+            });
+
+            // Execute Blob trigger download
+            try {
+                const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `포용성진단_자료_수집_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast("엑셀 파일이 준비되어 즉시 저장되었습니다.", "success");
+            } catch (e) {
+                console.error("CSV trigger failed: ", e);
+                showToast("다운로드 동작에 장애가 발생했습니다.", "error");
+            }
+        };
+
+        // Clipboard result sharer
+        window.shareResultsToClipboard = function() {
+            let d1 = document.getElementById('score-domain-1').innerText;
+            let d2 = document.getElementById('score-domain-2').innerText;
+            let d3 = document.getElementById('score-domain-3').innerText;
+            let total = document.getElementById('result-score').innerText;
+            let type = document.getElementById('result-category-title').innerText;
+
+            let shareText = `[직장 내 장애인 인식 및 협업 성향 자가진단]\n`;
+            shareText += `참여자: ${userName} (${userDept})\n`;
+            shareText += `종합 결과: ${total}점 / 60점\n`;
+            shareText += `협업 성향 유형: ${type}\n\n`;
+            shareText += `- 1영역(환경과 사회): ${d1}\n`;
+            shareText += `- 2영역(실무 소통태도): ${d2}\n`;
+            shareText += `- 3영역(심리적선입견): ${d3}\n\n`;
+            shareText += `나의 다양성 포용 성숙도 진단 완료! 지금 여러분의 협업 지수를 측정해 보세요.`;
+
+            // Copy helper
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = shareText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast("진단 요약 내용이 클립보드에 복사되었습니다.", "success");
+            } catch (err) {
+                console.error("Clipboard copy failed: ", err);
+                showToast("복사 도중 에러가 발생했습니다.", "error");
+            } finally {
+                document.body.removeChild(tempTextArea);
+            }
+        };
+
+        // Custom Toast system helper
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            // Toast theme classes
+            let bgClass = "bg-slate-950 text-white";
+            let icon = "fa-circle-info text-sky-400";
+
+            if (type === "success") {
+                bgClass = "bg-emerald-900 border-emerald-800 text-emerald-50";
+                icon = "fa-circle-check text-emerald-300";
+            } else if (type === "error") {
+                bgClass = "bg-rose-950 border-rose-900 text-rose-50";
+                icon = "fa-triangle-exclamation text-rose-300";
+            }
+
+            toast.className = `p-4 rounded-2xl shadow-xl border flex items-center gap-3 animate-fade-in pointer-events-auto transition-all max-w-sm ${bgClass}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-lg shrink-0"></i>
+                <p class="text-xs font-bold leading-snug">${message}</p>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto dismiss toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3500);
+        }
+
+        // Simple HTML Escaping utilities to block XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
